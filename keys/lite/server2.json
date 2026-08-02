@@ -1,22 +1,29 @@
 {
-  "remarks": "🇳🇱 Нидерланды",
-  "protocol": "trojan",
+  "remarks": "🇫🇷 Франция LTE",
+  "protocol": "vless",
   "settings": {
-    "servers": [
+    "vnext": [
       {
-        "address": "nl2.nnmm.me",
-        "port": 443,
-        "password": "UQWspaWj93McxEVVyx9Q7dmAAazUn0Vp"
+        "address": "80.78.245.48",
+        "port": 8880,
+        "users": [
+          {
+            "id": "ca400dc3-f920-4f87-a2a4-d7120be52249",
+            "encryption": "none",
+            "flow": ""
+          }
+        ]
       }
     ]
   },
   "streamSettings": {
-    "network": "tcp",
-    "security": "tls",
-    "tlsSettings": {
-      "serverName": "nl2.nnmm.me",
-      "fingerprint": "chrome",
-      "alpn": ["h2", "http/1.1"]
+    "network": "ws",
+    "security": "none",
+    "wsSettings": {
+      "headers": {
+        "Host": "cnd.france.nexusdataroute.com"
+      },
+      "path": "/cdn/assets/stream"
     }
   }
 }
