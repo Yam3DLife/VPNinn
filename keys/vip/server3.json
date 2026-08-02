@@ -1,1 +1,25 @@
-
+{
+  "remarks": "🇫🇷 Франция",
+  "protocol": "vless",
+  "settings": {
+    "vnext": [
+      {
+        "address": "80.78.245.48",
+        "port": 8880,
+        "users": [
+          {
+            "id": "ca400dc3-f920-4f87-a2a4-d7120be52249",
+            "encryption": "none",
+            "flow": ""
+          }
+        ]
+      }
+    ]
+  },
+  "streamSettings": {
+    "network": "ws",
+    "wsSettings": {
+      "path": "/cdn/assets/stream"
+    }
+  }
+}
