@@ -1,1 +1,22 @@
-
+{
+  "remarks": "🇳🇱 Нидерланды",
+  "protocol": "trojan",
+  "settings": {
+    "servers": [
+      {
+        "address": "nl2.nnmm.me",
+        "port": 443,
+        "password": "UQWspaWj93McxEVVyx9Q7dmAAazUn0Vp"
+      }
+    ]
+  },
+  "streamSettings": {
+    "network": "tcp",
+    "security": "tls",
+    "tlsSettings": {
+      "serverName": "nl2.nnmm.me",
+      "fingerprint": "chrome",
+      "alpn": ["h2", "http/1.1"]
+    }
+  }
+}
