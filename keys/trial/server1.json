@@ -1,5 +1,5 @@
 {
-  "remarks": "🇫🇷 Франция LTE",
+  "remarks": "🇫🇷 Франция",
   "protocol": "vless",
   "settings": {
     "vnext": [
@@ -18,11 +18,7 @@
   },
   "streamSettings": {
     "network": "ws",
-    "security": "none",
     "wsSettings": {
-      "headers": {
-        "Host": "cnd.france.nexusdataroute.com"
-      },
       "path": "/cdn/assets/stream"
     }
   }
