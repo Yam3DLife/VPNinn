@@ -29,25 +29,21 @@ def load_all_keys(tariff):
     return all_keys
 
 def build_json_subscription(keys, expire_timestamp, total_bytes, display_name, description):
-    """Собирает подписку в чистом JSON формате для Happ (Android)"""
+    """Собирает подписку в формате JSON-массива для Happ"""
     
-    # Создаём объект с метаданными и серверами
-    subscription = {
-        "profile-title": f"HotVPN {display_name}",
-        "profile-update-interval": 5,
-        "support-url": "https://t.me/Wd_Life",
-        "subscription-userinfo": {
-            "upload": 0,
-            "download": 0,
-            "total": total_bytes,
-            "expire": expire_timestamp
-        },
-        "sub-expire": True,
-        "announce": description,
-        "servers": keys  # массив серверов
-    }
-    
-    return json.dumps(subscription, indent=2, ensure_ascii=False)
+    # Просто массив серверов — это то, что ждёт Happ
+    # Добавляем метаданные в виде заголовков сверху
+    headers = f"""#profile-title: HotVPN {display_name}
+#profile-update-interval: 5
+#support-url: https://t.me/Wd_Life
+#subscription-userinfo: upload=0; download=0; total={total_bytes}; expire={expire_timestamp}
+#sub-expire: true
+#announce: {description}
+
+"""
+    json_part = json.dumps(keys, indent=2, ensure_ascii=False)
+    combined = headers + json_part
+    return base64.b64encode(combined.encode()).decode()
 
 def main():
     os.makedirs('subs', exist_ok=True)
@@ -59,8 +55,8 @@ def main():
     
     for user_id, user_info in users.items():
         if user_info.get('status') != 'active':
-            if os.path.exists(f'subs/{user_id}.json'):
-                os.remove(f'subs/{user_id}.json')
+            if os.path.exists(f'subs/{user_id}.txt'):
+                os.remove(f'subs/{user_id}.txt')
                 print(f"❌ {user_id}: заблокирован, файл удалён")
             continue
         
@@ -91,8 +87,7 @@ def main():
             
             subscription = build_json_subscription(keys, expire_timestamp, total_bytes, display_name, description)
             
-            # Сохраняем как .json, а не .txt
-            with open(f'subs/{user_id}.json', 'w', encoding='utf-8') as f:
+            with open(f'subs/{user_id}.txt', 'w', encoding='utf-8') as f:
                 f.write(subscription)
             
             print(f"✅ {user_id}: {display_name} | ключей: {len(keys)} | истекает: {expire_date_str or 'никогда'}")
