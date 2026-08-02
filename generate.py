@@ -3,7 +3,6 @@ import base64
 import os
 from datetime import datetime
 
-# ===== ЗАГРУЗКА ВСЕХ КЛЮЧЕЙ ИЗ ПАПКИ =====
 def load_all_keys(tariff):
     """Загружает все JSON-файлы из папки keys/{tariff}/ и объединяет в массив"""
     folder = f"keys/{tariff}"
@@ -13,7 +12,6 @@ def load_all_keys(tariff):
     
     all_keys = []
     
-    # Проходим по всем .json файлам в папке
     for filename in sorted(os.listdir(folder)):
         if filename.endswith('.json'):
             path = os.path.join(folder, filename)
@@ -30,23 +28,27 @@ def load_all_keys(tariff):
     
     return all_keys
 
-# ===== СОЗДАНИЕ ПОДПИСКИ =====
-def build_subscription(keys, expire_timestamp, total_bytes, display_name, description):
-    """Собирает подписку: заголовки + JSON-массив всех ключей"""
+def build_json_subscription(keys, expire_timestamp, total_bytes, display_name, description):
+    """Собирает подписку в чистом JSON формате для Happ (Android)"""
     
-    headers = f"""#profile-title: HotVPN {display_name}
-#profile-update-interval: 5
-#support-url: https://t.me/Wd_Life
-#subscription-userinfo: upload=0; download=0; total={total_bytes}; expire={expire_timestamp}
-#sub-expire: true
-#announce: {description}
+    # Создаём объект с метаданными и серверами
+    subscription = {
+        "profile-title": f"HotVPN {display_name}",
+        "profile-update-interval": 5,
+        "support-url": "https://t.me/Wd_Life",
+        "subscription-userinfo": {
+            "upload": 0,
+            "download": 0,
+            "total": total_bytes,
+            "expire": expire_timestamp
+        },
+        "sub-expire": True,
+        "announce": description,
+        "servers": keys  # массив серверов
+    }
+    
+    return json.dumps(subscription, indent=2, ensure_ascii=False)
 
-"""
-    json_part = json.dumps(keys, indent=2, ensure_ascii=False)
-    combined = headers + json_part
-    return base64.b64encode(combined.encode()).decode()
-
-# ===== ОСНОВНАЯ ФУНКЦИЯ =====
 def main():
     os.makedirs('subs', exist_ok=True)
     
@@ -57,8 +59,8 @@ def main():
     
     for user_id, user_info in users.items():
         if user_info.get('status') != 'active':
-            if os.path.exists(f'subs/{user_id}.txt'):
-                os.remove(f'subs/{user_id}.txt')
+            if os.path.exists(f'subs/{user_id}.json'):
+                os.remove(f'subs/{user_id}.json')
                 print(f"❌ {user_id}: заблокирован, файл удалён")
             continue
         
@@ -87,9 +89,10 @@ def main():
             keys = load_all_keys(tariff)
             print(f"  🔑 Найдено ключей: {len(keys)}")
             
-            subscription = build_subscription(keys, expire_timestamp, total_bytes, display_name, description)
+            subscription = build_json_subscription(keys, expire_timestamp, total_bytes, display_name, description)
             
-            with open(f'subs/{user_id}.txt', 'w', encoding='utf-8') as f:
+            # Сохраняем как .json, а не .txt
+            with open(f'subs/{user_id}.json', 'w', encoding='utf-8') as f:
                 f.write(subscription)
             
             print(f"✅ {user_id}: {display_name} | ключей: {len(keys)} | истекает: {expire_date_str or 'никогда'}")
