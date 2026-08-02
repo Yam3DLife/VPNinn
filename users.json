@@ -1,1 +1,6 @@
-
+"INN": {
+    "status": "active",
+    "plan": "vip",
+    "expire_date": "2026-09-15",
+    "traffic_limit_gb": 0
+}
