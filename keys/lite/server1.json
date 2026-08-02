@@ -1,1 +1,22 @@
-
+{
+  "remarks": "🇩🇪 Германия",
+  "protocol": "trojan",
+  "settings": {
+    "servers": [
+      {
+        "address": "de5.nnmm.me",
+        "port": 443,
+        "password": "UQWspaWj93McxEVVyx9Q7dmAAazUn0Vp"
+      }
+    ]
+  },
+  "streamSettings": {
+    "network": "tcp",
+    "security": "tls",
+    "tlsSettings": {
+      "serverName": "de5.nnmm.me",
+      "fingerprint": "qq",
+      "alpn": ["h2", "http/1.1"]
+    }
+  }
+}
