@@ -2,13 +2,11 @@ name: Generate User Subscriptions
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
     paths:
       - 'users.json'
       - 'generate.py'
       - 'keys/**'
-  schedule:
-    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 jobs:
@@ -16,34 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
-      - name: Create directories
-        run: |
-          mkdir -p keys/vip keys/lite keys/trial subs
-      
-      - name: Run generation script
+      - name: Run
         run: python generate.py
-      
-      - name: Commit and push changes
+      - name: Commit
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add subs/*.txt 2>/dev/null || true
-          git add users.json 2>/dev/null || true
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Auto-update subscriptions [skip ci]"
-            git push origin main || git push origin main --force
-          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add subs/*.txt
+          git diff --cached --quiet || git commit -m "Update subs"
+          git push
